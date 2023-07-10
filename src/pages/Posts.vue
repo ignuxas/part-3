@@ -1,14 +1,15 @@
 <template>
     <div>
+        <MutatePost :authors="authors"/>
         <div v-if="posts.length === 0 && !checkAllTrue(Object.values(loading))">
             <p>There are no posts yet</p>
+            <a @click.prevent="toggleMutateWindow()" class="clickable">New post</a>
         </div>
         <div v-else-if="checkAllTrue(Object.values(loading))">
             <p>Loading...</p>
         </div>
         <div v-else>
             <Search/>
-            <MutatePost :authors="authors"/>
             <Delete/>
             <div class="postContainer">
                 <div class="post" v-for="article in posts" :key="article.id">

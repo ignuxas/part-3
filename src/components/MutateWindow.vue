@@ -154,6 +154,7 @@ export default {
                 this.status = 500;
                 console.log(error);
             } finally {
+                this.$root.$emit("updatePosts");
                 this.$root.$emit('setStatus', this.status, this.action);
             }
         },

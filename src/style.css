@@ -51,6 +51,7 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+  background-color: var(--color-background);
   min-width: 320px;
   min-height: 100vh;
 }
@@ -101,8 +102,13 @@ input{
   padding: 6px 10px;
   transition: background-color 0.2s ease-in-out;
 }
-.icon:hover{
-  background-color: var(--color-secondary);
+.icon:hover{background-color: var(--color-secondary);}
+.clickable{cursor: pointer;}
+
+.flexCenter{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #app {
