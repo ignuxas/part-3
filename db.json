@@ -1,0 +1,92 @@
+{
+  "authors": [
+    {
+      "id": 1,
+      "name": "Oliver",
+      "created_at": "2023-05-31",
+      "updated_at": "2023-05-31"
+    },
+    {
+      "id": 2,
+      "name": "Evelyn",
+      "created_at": "2023-05-31",
+      "updated_at": "2023-05-31"
+    },
+    {
+      "id": 3,
+      "name": "Leo",
+      "created_at": "2023-05-31",
+      "updated_at": "2023-05-31"
+    },
+    {
+      "id": 4,
+      "name": "Luna",
+      "created_at": "2023-05-31",
+      "updated_at": "2023-05-31"
+    },
+    {
+      "id": 5,
+      "name": "Max",
+      "created_at": "2023-05-31",
+      "updated_at": "2023-05-31"
+    }
+  ],
+  "posts": [
+    {
+      "id": 6,
+      "title": "Morbi Feugiat",
+      "body": "Morbi feugiat metus at lorem posuere rhoncus.",
+      "authorId": 3,
+      "created_at": "2023-05-31",
+      "updated_at": "2023-05-31"
+    },
+    {
+      "title": "Fusce Rutrum",
+      "authorId": 5,
+      "updated_at": "2023-7-10",
+      "created_at": "2023-05-31",
+      "body": "Fusce rutrum neque eget leo tempus, sed bibendum arcu lobortis.",
+      "id": 7
+    },
+    {
+      "title": "Sed Consequat",
+      "authorId": 1,
+      "updated_at": "2023-7-5",
+      "created_at": "2023-05-31",
+      "body": "Sed consequat nunc ut purus scelerisque cursus.",
+      "id": 8
+    },
+    {
+      "title": "Etiam Ultricies",
+      "authorId": 4,
+      "updated_at": "2023-7-10",
+      "created_at": "2023-05-31",
+      "body": "Etiam ultricies risus at nunc congue scelerisque.",
+      "id": 9
+    },
+    {
+      "id": 10,
+      "title": "Vestibulum Tincidunt",
+      "body": "Vestibulum tincidunt ex vitae ex ultrices, ac eleifend lectus bibendum.",
+      "authorId": 2,
+      "created_at": "2023-05-31",
+      "updated_at": "2023-05-31"
+    },
+    {
+      "title": "Ball Inspection",
+      "authorId": 4,
+      "updated_at": "2023-7-5",
+      "created_at": "2023-05-31",
+      "body": "Balls work? no? ok",
+      "id": 11
+    },
+    {
+      "title": "ast tests tstst",
+      "authorId": 4,
+      "created_at": "2023-7-10",
+      "updated_at": "2023-7-10",
+      "body": "gfdg fdg dfg dg",
+      "id": 12
+    }
+  ]
+}
