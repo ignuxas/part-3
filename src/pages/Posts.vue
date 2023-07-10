@@ -13,7 +13,7 @@
             <Delete/>
             <div class="postContainer">
                 <div class="post" v-for="article in posts" :key="article.id">
-                    <h2 @click="goToPage(article.id)"><pagination :number="article.id"/>{{ article.title }}</h2>
+                    <h2 @click="goToPage(article.id)">{{ article.title }}</h2>
                     <p>{{ getAuthor(article.authorId).name }}</p>
                     <p class="postDate" v-if="compareDates(article.updated_at, article.created_at)">
                         {{ article.updated_at }}
@@ -30,6 +30,7 @@
                 </div>
                 <button id="CreateUserBtn" @click="toggleMutateWindow()">+</button>
             </div>
+            <Pagination/>
         </div>
     </div>
 </template>
@@ -38,17 +39,17 @@
 import config from "../config.json"
 import { checkAllTrue, compareDates } from "../components/handlers.vue";
 import MutatePost from "../components/MutateWindow.vue";
-import pagination from "../components/Pagination.vue";
 import Search from "../components/Search.vue";
 import Delete from "../components/Delete.vue";
+import Pagination from "../components/Pagination.vue";
 
 export default {
     name: "posts",
     components: {
         MutatePost,
-        pagination,
         Search,
         Delete,
+        Pagination,
     },
     data(){
         return {
@@ -67,11 +68,16 @@ export default {
         this.getPosts();
         this.$root.$on('updatePosts', (posts) => this.getPosts(posts));
     },
+    computed: {
+        currentPage(){return this.$store.state.currentPage;},
+        postsPerPage(){return this.$store.state.postsPerPage;}
+    },
     methods: {
-        async getPosts(posts){
+        async getPosts(posts, page = this.currentPage, postsPerPage = this.postsPerPage){
             if (posts) { this.posts = posts; return; }
             try{
-                const response = await fetch(config.api + "/posts");
+                const response = await fetch(config.api + "/posts?_page=" + page + "&_limit=" + postsPerPage);
+                this.$store.state.totalPosts = response.headers.get("X-Total-Count");
                 this.posts = await response.json();
             } catch (error) { 
                 console.log(error);

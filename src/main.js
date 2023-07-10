@@ -5,10 +5,11 @@ import Routes from './routes';
 import store from './store';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTrashCan, faPen, faMagnifyingGlass, faHouse } from '@fortawesome/free-solid-svg-icons'
+import { faTrashCan, faPen, faMagnifyingGlass, faHouse,
+         faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faTrashCan, faPen, faMagnifyingGlass, faHouse)
+library.add(faTrashCan, faPen, faMagnifyingGlass, faHouse, faChevronLeft, faChevronRight)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueRouter);
