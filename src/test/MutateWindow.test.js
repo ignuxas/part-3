@@ -2,6 +2,14 @@ import { shallowMount } from "@vue/test-utils";
 import { expect, test} from "vitest";
 import MutateWindow from "../components/MutateWindow.vue";
 
+const defaultData = {
+    selectedAuthorId: 1,
+    content: "",
+    title: "",
+    editMode: false,
+    status: 200,
+};
+
 test("Mutate window (Edit Mode)", async () => {
     expect(MutateWindow).toBeTruthy(); // MutateWindow is defined
     const post = {
@@ -23,7 +31,7 @@ test("Mutate window (Edit Mode)", async () => {
             editMode: true,
             status: 200,
         }},
-        props: {
+        propsData: {
             authors: [
                 {
                     "id": 1,
@@ -71,7 +79,7 @@ test("Mutate window (Create Mode)", async () => {
             editMode: false,
             status: 200,
         }},
-        props: {
+        propsData: {
             authors: [
                 {
                     "id": 1,
