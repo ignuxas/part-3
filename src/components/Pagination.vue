@@ -1,26 +1,26 @@
 <template>
-    <div id="pagination">
-        <div id="pagination__buttons">
+    <div id="Pagination">
+        <div id="PaginationButtons">
             <button
-                id="pagination__button--prev"
+                id="PaginationButtonPrev"
                 :disabled="currentPage === 1"
                 @click="prevPage"
             >
                 <font-awesome-icon :icon="['fas', 'chevron-left']" />
             </button>
             <button
-                id="pagination__button--next"
+                id="PaginationButtonNext"
                 :disabled="currentPage === lastPage"
                 @click="nextPage"
             >
                 <font-awesome-icon :icon="['fas', 'chevron-right']" />
             </button>
         </div>
-        <div id="pagination__info">
-            <span id="pagination__info--current">
+        <div id="PaginationInfo">
+            <span id="paginationInfoCurrent">
                 {{ currentPage }}
             </span>
-            <span id="pagination__info--total">
+            <span id="PaginationInfoTotal">
                 / {{ lastPage }}
             </span>
         </div>
@@ -48,10 +48,7 @@ export default {
                 this.$store.state.currentPage--;
                 this.$root.$emit("updatePosts");
             }
-        },
-        getQuantity(){
-            return this.$store.state.posts.length;
-        },
+        }
     }
 };
 </script>
