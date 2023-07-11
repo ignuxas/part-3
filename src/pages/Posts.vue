@@ -1,8 +1,13 @@
 <template>
     <div>
         <MutatePost :authors="authors"/>
-        <div v-if="posts.length === 0 && !checkAllTrue(Object.values(loading))">
+        <div v-if="totalPosts == 0 && !checkAllTrue(Object.values(loading))">
             <p>There are no posts yet</p>
+            <a @click.prevent="toggleMutateWindow()" class="clickable">New post</a>
+        </div>
+        <div v-else-if="totalPosts > 0 && !checkAllTrue(Object.values(loading)) && posts.length == 0">
+            <Search/>
+            <p>No posts were found</p>
             <a @click.prevent="toggleMutateWindow()" class="clickable">New post</a>
         </div>
         <div v-else-if="checkAllTrue(Object.values(loading))">
@@ -70,7 +75,8 @@ export default {
     },
     computed: {
         currentPage(){return this.$store.state.currentPage;},
-        postsPerPage(){return this.$store.state.postsPerPage;}
+        postsPerPage(){return this.$store.state.postsPerPage;},
+        totalPosts(){return this.$store.state.totalPosts;},
     },
     methods: {
         async getPosts(posts, page = this.currentPage, postsPerPage = this.postsPerPage){
