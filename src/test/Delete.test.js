@@ -12,8 +12,8 @@ test("Delete functionality", async () => {
           },
         },
         computed: {
-            currentPostId: () => {return 1;},
-            showDeleteWindow: () => {return true;}
+            getCurrentPostId: () => {return 1;},
+            getShowDeleteWindow: () => {return true;}
         }
 
     });

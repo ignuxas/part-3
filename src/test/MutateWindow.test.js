@@ -42,12 +42,14 @@ test("Mutate window (Edit Mode)", async () => {
             ],
         },
         computed: {
-            showMutateWindow: () => true,
-            post: () => (post),
-            authorId: () => (post.authorId),
-            editModeStore: () => false,
+            getShowMutateWindow: () => true,
+            getShowDeleteWindow: () => false,
+            getCurrentPost: () => (post),
+            getEditMode: () => true,
         },
         methods: {
+            toggleShowDeleteWindow: () => {},
+            toggleShowMutateWindow: () => {},
             editPost: () => {editPostCalled = true;},
         },
     });
@@ -90,12 +92,14 @@ test("Mutate window (Create Mode)", async () => {
             ],
         },
         computed: {
-            showMutateWindow: () => true,
-            post: () => ({}),
-            authorId: () => (1),
-            editModeStore: () => false,
+            getShowMutateWindow: () => true,
+            getShowDeleteWindow: () => false,
+            getCurrentPost: () => (null),
+            getEditMode: () => false,
         },
         methods: {
+            toggleShowDeleteWindow: () => {},
+            toggleShowMutateWindow: () => {},
             createPost: () => {createPostCalled = true;},
         },
     });

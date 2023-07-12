@@ -3,14 +3,14 @@
         <div id="PaginationButtons">
             <button
                 id="PaginationButtonPrev"
-                :disabled="currentPage === 1"
+                :disabled="getCurrentPage === 1"
                 @click="prevPage"
             >
                 <font-awesome-icon :icon="['fas', 'chevron-left']" />
             </button>
             <button
                 id="PaginationButtonNext"
-                :disabled="currentPage === lastPage"
+                :disabled="getCurrentPage === lastPage"
                 @click="nextPage"
             >
                 <font-awesome-icon :icon="['fas', 'chevron-right']" />
@@ -18,7 +18,7 @@
         </div>
         <div id="PaginationInfo">
             <span id="paginationInfoCurrent">
-                {{ currentPage }}
+                {{ getCurrentPage }}
             </span>
             <span id="PaginationInfoTotal">
                 / {{ lastPage }}
@@ -28,24 +28,25 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
     name: "pagination",
     computed: {
-        currentPage(){return this.$store.state.currentPage;},
-        postsPerPage(){return this.$store.state.postsPerPage;},
-        totalPosts(){return this.$store.state.totalPosts;},
-        lastPage(){return Math.ceil(this.totalPosts / this.postsPerPage);},
+        ...mapGetters("pageData", ["getCurrentPage", "getPostsPerPage", "getTotalPosts"]),
+        lastPage(){return Math.ceil(this.getTotalPosts / this.getPostsPerPage);},
     },
     methods: {
+        ...mapMutations("pageData", ["incrimentCurrentPage", "decrimentCurrentPage"]),
         nextPage(){
-            if (this.currentPage < this.lastPage) {
-                this.$store.state.currentPage++;
+            if (this.getCurrentPage < this.lastPage) {
+                this.incrimentCurrentPage();
                 this.$root.$emit("updatePosts");
             }
         },
         prevPage(){
-            if (this.currentPage > 1) {
-                this.$store.state.currentPage--;
+            if (this.getCurrentPage > 1) {
+                this.decrimentCurrentPage();
                 this.$root.$emit("updatePosts");
             }
         }

@@ -9,16 +9,20 @@
 
 <script>
 import api from "../config.json";
+import { mapGetters } from "vuex";
 
 export default {
     name: "Search",
     data() {return {
         searchInput: "",
     }},
+    computed: {
+        ...mapGetters("pageData", ["getPostsPerPage", "getCurrentPage"]),
+    },
     methods: {
         async search(){
             try{
-                const response = await fetch(api.api + "/posts?q=" + this.searchInput);
+                const response = await fetch(api.api + "/posts?q=" + this.searchInput + "&_page=" + this.getCurrentPage + "&_limit=" + this.getPostsPerPage);
                 const posts = await response.json();
                 this.$root.$emit("updatePosts", posts);
             }  

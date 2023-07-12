@@ -1,26 +1,27 @@
 <template>
-    <div id="MutateWindow" :class="{hidden: !showMutateWindow}">
+    <div id="MutateWindow" :class="{hidden: !getShowMutateWindow}">
         <form id="CreateUserContainer">
-            <h2 v-if="editMode">Edit Post</h2>
+            <h2 v-if="getEditMode">Edit Post</h2>
             <h2 v-else>Create Post</h2>
             <div class="formSmallInputs">
                 <input type="text" id="Title" v-model="title" placeholder="Title"/>
-                <select id="AuthorId" :class="{disabled: editMode}" v-model="selectedAuthorId">
+                <select id="AuthorId" :class="{disabled: getEditMode}" v-model="selectedAuthorId">
                     <option v-for="author in authors" :key="author.id" :value="author.id">
                         {{ author.name }}
                     </option>
                 </select>
             </div>
             <textarea id="Content" placeholder="Contnent" v-model="content"  ></textarea>
-            <button v-if="editMode" type="Submit" @click.prevent="editPost">Submit</button>
+            <button v-if="getEditMode" type="Submit" @click.prevent="editPost">Submit</button>
             <button v-else type="Submit" @click.prevent="createPost">Create</button>
         </form>
-    <div class="blackBg" @click="toggleMutateWindowHidden"></div>
+    <div class="blackBg" @click="toggleShowMutateWindow()"></div>
     </div>
 </template>
 
 <script>
 import config from "../config.json";
+import { mapGetters, mapMutations } from "vuex";
 import { getCurrentDate } from "./handlers.vue";
 
 export default {
@@ -29,7 +30,6 @@ export default {
         selectedAuthorId: null,
         title: "",
         content: "",
-        editMode: false,
         status: 200,
     }},
     props: {
@@ -39,35 +39,32 @@ export default {
         },
     },
     computed: {
-        showMutateWindow(){return this.$store.state.showMutateWindow;},
-        post(){return this.$store.state.currentPost;},
-        postId(){return this.post.id;},
-        editModeStore(){return this.$store.state.editMode;},
+        ...mapGetters("postData", ["getCurrentPost"]),
+        ...mapGetters('mutateData', ["getShowMutateWindow", "getShowDeleteWindow", "getEditMode"]),
     }, 
     watch: {
-        post(){
-            console.log("post changed");
-            if(this.showMutateWindow){
-                if(this.editModeStore){
-                    this.selectedAuthorId = this.post.authorId;
-                    this.title = this.post.title;
-                    this.content = this.post.body;
-                    this.editMode = this.editModeStore;
+        getCurrentPost(post){
+            if(this.getShowMutateWindow){
+                if(this.getEditMode)
+                {
+                    this.selectedAuthorId = post.authorId;
+                    this.title = post.title;
+                    this.content = post.body;
                 } else {
                     this.selectedAuthorId = null;
                     this.title = "";
                     this.content = "";
-                    this.editMode = this.editModeStore;
                 }
             }
         },
     },
     methods: {
+        ...mapMutations("mutateData", ["toggleShowDeleteWindow", "toggleShowMutateWindow"]),
         checkInputValidity(){
             const titleInput = document.getElementById("Title");
             const contentInput = document.getElementById("Content");
             const authorSelect = document.getElementById("AuthorId");
-            
+
             const inputList = [
                 titleInput,
                 contentInput,
@@ -132,35 +129,32 @@ export default {
 
         async editPost(){
             if(!this.checkInputValidity()) return;
-            const dataToPost = {
-                title: this.title,
-                authorId: this.selectedAuthorId,
-                updated_at: getCurrentDate(), // should be server-side
-                created_at: this.post.created_at, // should be server-side
-                body: this.content,
-            };
-            console.log(dataToPost);
-            try {
-                const response = await fetch(config.api + "/posts/" + this.postId, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(dataToPost),
-                });
-                this.status = response.status;
-                this.action = "edited";
-            } catch (error) {
-                this.status = 500;
-                console.log(error);
-            } finally {
-                this.$root.$emit("updatePosts");
-                this.$root.$emit('setStatus', this.status, this.action);
-            }
-        },
-        toggleMutateWindowHidden(){
-            this.$store.state.showMutateWindow = !this.$store.state.showMutateWindow;
-        },
+                const dataToPost = {
+                    title: this.title,
+                    authorId: this.selectedAuthorId,
+                    updated_at: getCurrentDate(), // should be server-side
+                    created_at: this.getCurrentPost.created_at, // should be server-side
+                    body: this.content,
+                };
+                console.log(dataToPost);
+                try {
+                    const response = await fetch(config.api + "/posts/" + this.getCurrentPost.id, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(dataToPost),
+                    });
+                    this.status = response.status;
+                    this.action = "edited";
+                } catch (error) {
+                    this.status = 500;
+                    console.log(error);
+                } finally {
+                    this.$root.$emit("updatePosts");
+                    this.$root.$emit('setStatus', this.status, this.action);
+                }
+            },
     },
 }
 </script>

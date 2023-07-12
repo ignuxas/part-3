@@ -8,11 +8,13 @@ test("Pagination functionality", async () => {
     let prevCalled = false;
     const wrapper = mount(Pagination, {
         computed: {
-            currentPage: () => {return 2;},
-            totalPosts: () => {return 18;},
-            postsPerPage: () => {return 6;}
+            getCurrentPage: () => {return 2;},
+            getTotalPosts: () => {return 18;},
+            getPostsPerPage: () => {return 6;}
         },
         methods: {
+            incrimentCurrentPage(){},
+            decrimentCurrentPage(){},
             nextPage(){return nextCalled = true;},
             prevPage(){return prevCalled = true;}
         },

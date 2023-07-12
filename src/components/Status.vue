@@ -40,7 +40,6 @@ export default {
             this.status = status;
             this.action = action;
             console.log(this.status, this.action);
-            this.$forceUpdate();
             this.hidden = false;
             setTimeout(() => {
                 this.hidden = true;

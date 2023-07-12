@@ -1,4 +1,6 @@
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export function compareDates(d1, d2) {
             let date1 = new Date(d1).getTime();
             let date2 = new Date(d2).getTime();

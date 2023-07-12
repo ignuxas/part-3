@@ -1,25 +1,26 @@
 <template>
-    <div id="ConfirmContainer" :class="showDeleteWindow ? '':'hidden'">
+    <div id="ConfirmContainer" :class="getShowDeleteWindow ? '':'hidden'">
         <div id="ConfirmBox">
             <span>Are you sure you want to delete this post?</span>
-            <p> ID: {{ currentPostId }} </p>
+            <p> ID: {{ getCurrentPostId }} </p>
             <div id="confirmButtons"> 
-                <button id="confirmYes" @click="deletePost(currentPostId)">Yes</button>
-                <button id="confirmNo" @click="toggleConfirm">No</button>
+                <button id="confirmYes" @click="deletePost(getCurrentPostId)">Yes</button>
+                <button id="confirmNo" @click="toggleShowDeleteWindow()">No</button>
             </div>
         </div>
-        <div class="blackBg" @click="toggleConfirm"></div>
+        <div class="blackBg" @click="toggleShowDeleteWindow()"></div>
     </div>
 </template>
 
 <script>
 import config from "../config.json";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
     name: "Delete",
     computed: {
-        currentPostId(){return this.$store.state.currentPostId;},
-        showDeleteWindow(){return this.$store.state.showDeleteWindow;},
+        ...mapGetters('mutateData', ["getShowDeleteWindow"]),
+        ...mapGetters('postData', ["getCurrentPostId"]),
     },
     props:{
         pushBackPage: {
@@ -28,13 +29,14 @@ export default {
         },
     },
     methods : {
+        ...mapMutations('mutateData', ["toggleShowDeleteWindow"]),
         async deletePost(postId){
             try {
                 const response = await fetch(config.api + "/posts/" + postId, {
                     method: "DELETE",
                 });
                 if (response.ok) {
-                    this.toggleConfirm(false);
+                    this.toggleShowDeleteWindow(false);
                     if (this.pushBackPage) this.$router.push("/posts");
                     else this.$root.$emit("updatePosts");
                 } 
@@ -43,9 +45,6 @@ export default {
                 console.log(error);
                 this.$root.$emit("setStatus", 500);
             }
-        },
-        toggleConfirm(){
-            this.$store.state.showDeleteWindow = !this.$store.state.showDeleteWindow;
         },
     },
 

@@ -1,11 +1,11 @@
 <template>
     <div>
         <MutatePost :authors="authors"/>
-        <div v-if="totalPosts == 0 && !checkAllTrue(Object.values(loading))">
+        <div v-if="getTotalPosts == 0 && !checkAllTrue(Object.values(loading))">
             <p>There are no posts yet</p>
             <a @click.prevent="toggleMutateWindow()" class="clickable">New post</a>
         </div>
-        <div v-else-if="totalPosts > 0 && !checkAllTrue(Object.values(loading)) && posts.length == 0">
+        <div v-else-if="getTotalPosts > 0 && !checkAllTrue(Object.values(loading)) && posts.length == 0">
             <Search/>
             <p>No posts were found</p>
             <a @click.prevent="toggleMutateWindow()" class="clickable">New post</a>
@@ -47,6 +47,7 @@ import MutatePost from "../components/MutateWindow.vue";
 import Search from "../components/Search.vue";
 import Delete from "../components/Delete.vue";
 import Pagination from "../components/Pagination.vue";
+import { mapMutations, mapGetters } from "vuex";
 
 export default {
     name: "posts",
@@ -74,16 +75,18 @@ export default {
         this.$root.$on('updatePosts', (posts) => this.getPosts(posts));
     },
     computed: {
-        currentPage(){return this.$store.state.currentPage;},
-        postsPerPage(){return this.$store.state.postsPerPage;},
-        totalPosts(){return this.$store.state.totalPosts;},
+        ...mapGetters("pageData", ["getCurrentPage", "getPostsPerPage", "getTotalPosts"]),
+        ...mapGetters("mutateData", ["getShowMutateWindow", "showDeleteWindow", "getEditMode"]),
     },
     methods: {
-        async getPosts(posts, page = this.currentPage, postsPerPage = this.postsPerPage){
+        ...mapMutations("postData", ["setCurrentPost", "setCurrentPostId"]),
+        ...mapMutations("pageData", ["setTotalPosts"]),
+        ...mapMutations("mutateData", ["toggleShowMutateWindow", "toggleShowDeleteWindow", "setEditMode"]),
+        async getPosts(posts){
             if (posts) { this.posts = posts; return; }
             try{
-                const response = await fetch(config.api + "/posts?_page=" + page + "&_limit=" + postsPerPage);
-                this.$store.state.totalPosts = response.headers.get("X-Total-Count");
+                const response = await fetch(config.api + "/posts?_page=" + this.getCurrentPage + "&_limit=" + this.getPostsPerPage);
+                this.setTotalPosts(response.headers.get("X-Total-Count"))
                 this.posts = await response.json();
             } catch (error) { 
                 console.log(error);
@@ -105,13 +108,13 @@ export default {
             this.$router.push({path: `details/${page}`});
         },
         toggleMutateWindow(post = null, editMode = false){
-            this.$store.state.currentPost = post;
-            this.$store.state.editMode = editMode;
-            this.$store.state.showMutateWindow = !this.$store.state.showMutateWindow;
+            this.setCurrentPost(post);
+            this.setEditMode(editMode);
+            this.toggleShowMutateWindow();
         },
         toggleDeleteWindow(id){
-            this.$store.state.currentPostId = id;
-            this.$store.state.showDeleteWindow = !this.$store.state.deleteWindow;
+            this.setCurrentPostId(id);
+            this.toggleShowDeleteWindow();
         },
     },
 };

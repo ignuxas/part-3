@@ -19,10 +19,10 @@
             <p>{{ post.body }}</p>
             <div class="flexCenter">
                 <div class="iconContainer">
-                    <div class="icon" @click="toggleDeleteWindow(post.id)">
+                    <div class="icon" @click="toggleDeleteWindowFunc(post.id)">
                         <font-awesome-icon :icon="['fas', 'trash-can']" />
                     </div>
-                    <div class="icon" @click="toggleMutateWindow(post, true)">
+                    <div class="icon" @click="toggleMutateWindowFunc(post, true)">
                         <font-awesome-icon :icon="['fas', 'pen']" />
                     </div>
                 </div>
@@ -34,6 +34,7 @@
 <script>
 import config from "../config.json"
 import { compareDates } from "../components/handlers.vue";
+import { mapMutations, mapGetters } from "vuex";
 import MutatePost from "../components/MutateWindow.vue";
 import Delete from "../components/Delete.vue";
 import HomeBtn from "../components/HomeBtn.vue";
@@ -59,7 +60,11 @@ export default {
         Delete,
         HomeBtn,
     },
+    computed: {
+    },
     methods: {
+        ...mapMutations('mutateData', ['toggleShowMutateWindow', 'toggleShowDeleteWindow', 'setEditMode']),
+        ...mapMutations('postData', ['setCurrentPost', 'setCurrentPostId']),
         async getPost(){
             try {
                 const response = await fetch(config.api + "/posts/" + this.postId);
@@ -86,14 +91,14 @@ export default {
             }
             finally{ this.isLoading = false; }
         },
-        toggleMutateWindow(post = null, editMode = false){
-            this.$store.state.currentPost = post;
-            this.$store.state.editMode = editMode;
-            this.$store.state.showMutateWindow = !this.$store.state.showMutateWindow;
+        toggleMutateWindowFunc(post = null, editMode = false){
+            this.setCurrentPost(post);
+            this.setEditMode(editMode);
+            this.toggleShowMutateWindow();
         },
-        toggleDeleteWindow(id){
-            this.$store.state.currentPostId = id;
-            this.$store.state.showDeleteWindow = !this.$store.state.deleteWindow;
+        toggleDeleteWindowFunc(id){
+            this.setCurrentPostId(id);
+            this.toggleShowDeleteWindow();
         },
     },
 };
