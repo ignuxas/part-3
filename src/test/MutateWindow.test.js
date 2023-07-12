@@ -97,7 +97,7 @@ test("Mutate window (Create Mode)", async () => {
             getCurrentPost: () => (null),
             getEditMode: () => false,
         },
-        methods: {
+        methods: { // depricated in Vue 3
             toggleShowDeleteWindow: () => {},
             toggleShowMutateWindow: () => {},
             createPost: () => {createPostCalled = true;},

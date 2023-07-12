@@ -7,7 +7,7 @@ test("Search functionality", async () => {
     expect(Search).toBeTruthy(); // MutateWindow is defined
     let searchCalled = false;
     const wrapper = mount(Search, {
-        methods: {
+        methods: { // depricated in Vue 3
           search: () => {
             searchCalled = true;
           },

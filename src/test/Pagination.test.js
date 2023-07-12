@@ -1,23 +1,23 @@
-import {mount} from "@vue/test-utils";
 import {expect, test} from "vitest";
 import Pagination from "../components/Pagination.vue";
+import { mount, createLocalVue } from "@vue/test-utils";
+import Vuex from "vuex";
 
-test("Pagination functionality", async () => {
+import Store from "../store.js";
+
+const localVue = createLocalVue();
+localVue.use(Vuex);
+
+test("Pagination functionality with modified store", async () => {
+    let store = Store;
+
+    store.state.pageData.currentPage = 2;
+    store.state.pageData.postsPerPage = 6;
+    store.state.pageData.totalPosts = 18;
+
     expect(Pagination).toBeTruthy(); // Pagination is defined
-    let nextCalled = false;
-    let prevCalled = false;
     const wrapper = mount(Pagination, {
-        computed: {
-            getCurrentPage: () => {return 2;},
-            getTotalPosts: () => {return 18;},
-            getPostsPerPage: () => {return 6;}
-        },
-        methods: {
-            incrimentCurrentPage(){},
-            decrimentCurrentPage(){},
-            nextPage(){return nextCalled = true;},
-            prevPage(){return prevCalled = true;}
-        },
+        store: Store,
     });
 
     expect(wrapper).toBeTruthy(); // Pagination is mounted
@@ -25,9 +25,10 @@ test("Pagination functionality", async () => {
     //check if the component is rendered
     expect(wrapper.html()).toContain("Pagination");
 
-    // expect the pagination method to be called
-    await wrapper.find("#PaginationButtonNext").trigger("click");
+    //check if the nextPage function is called
     await wrapper.find("#PaginationButtonPrev").trigger("click");
-    expect(prevCalled).toBe(true);
-    expect(nextCalled).toBe(true);
+    expect(store.state.pageData.currentPage).toBe(1);
+
+    await wrapper.find("#PaginationButtonNext").trigger("click");
+    expect(store.state.pageData.currentPage).toBe(2);
 });
