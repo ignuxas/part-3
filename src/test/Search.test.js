@@ -1,7 +1,12 @@
-import { mount } from "@vue/test-utils";
-//import HelloWorld from "../components/HelloWorld.vue";
+import { mount, createLocalVue } from "@vue/test-utils";
 import { expect, test} from "vitest";
+import vuex from "vuex";
 import Search from "../components/Search.vue";
+
+import Store from "../store.js";
+
+const localVue = createLocalVue();
+localVue.use(vuex);
 
 test("Search functionality", async () => {
     expect(Search).toBeTruthy(); // MutateWindow is defined

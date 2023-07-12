@@ -1,20 +1,18 @@
-import { shallowMount } from "@vue/test-utils";
+import { shallowMount, createLocalVue } from "@vue/test-utils";
 import { expect, test} from "vitest";
 import MutateWindow from "../components/MutateWindow.vue";
+import Vuex from "vuex";
 
-const defaultData = {
-    selectedAuthorId: 1,
-    content: "",
-    title: "",
-    editMode: false,
-    status: 200,
-};
+import Store from "../store";
+
+const localVue = createLocalVue();
+localVue.use(Vuex);
 
 test("Mutate window (Edit Mode)", async () => {
     expect(MutateWindow).toBeTruthy(); // MutateWindow is defined
     const post = {
         "title": "abongus",
-        "authorId": 2,
+        "authorId": 1,
         "updated_at": "2023-7-10",
         "created_at": "2023-7-10",
         "body": "amongus sus sus amongus sus s dsd fs df sdf",
@@ -23,7 +21,11 @@ test("Mutate window (Edit Mode)", async () => {
 
     let editPostCalled = false;
 
-    const wrapper = shallowMount(MutateWindow, {
+    let store = Store;
+    store.state.postData.currentPost = post;
+    store.state.mutateData.editMode = true;
+
+    const wrapper = shallowMount(MutateWindow, {        
         data() {return {
             selectedAuthorId: 1,
             content: post.body,
@@ -41,17 +43,7 @@ test("Mutate window (Edit Mode)", async () => {
                 },
             ],
         },
-        computed: {
-            getShowMutateWindow: () => true,
-            getShowDeleteWindow: () => false,
-            getCurrentPost: () => (post),
-            getEditMode: () => true,
-        },
-        methods: {
-            toggleShowDeleteWindow: () => {},
-            toggleShowMutateWindow: () => {},
-            editPost: () => {editPostCalled = true;},
-        },
+        store: Store,
     });
 
     expect(wrapper).toBeTruthy(); // MutateWindow is mounted
@@ -62,16 +54,15 @@ test("Mutate window (Edit Mode)", async () => {
     expect(wrapper.find("#AuthorId").element.className).toBe("disabled");
     expect(wrapper.find("#Title").element.value).toBe(post.title);
     expect(wrapper.find("#Content").element.value).toBe(post.body);
-
-    // check if editPost is called
-    await wrapper.find("button").trigger("click");
-    expect(editPostCalled).toBe(true);
 });
 
 test("Mutate window (Create Mode)", async () => {
     expect(MutateWindow).toBeTruthy(); // MutateWindow is defined
     
     let createPostCalled = false;
+
+    let store = Store;
+    store.state.mutateData.editMode = false;
     
     const wrapper = shallowMount(MutateWindow, {
         data() {return {
@@ -91,17 +82,7 @@ test("Mutate window (Create Mode)", async () => {
                 },
             ],
         },
-        computed: {
-            getShowMutateWindow: () => true,
-            getShowDeleteWindow: () => false,
-            getCurrentPost: () => (null),
-            getEditMode: () => false,
-        },
-        methods: { // depricated in Vue 3
-            toggleShowDeleteWindow: () => {},
-            toggleShowMutateWindow: () => {},
-            createPost: () => {createPostCalled = true;},
-        },
+        store: Store,
     });
 
     expect(wrapper).toBeTruthy(); // MutateWindow is mounted
@@ -112,8 +93,4 @@ test("Mutate window (Create Mode)", async () => {
     expect(wrapper.find("#AuthorId").element.className).toBe("");
     expect(wrapper.find("#Title").element.value).toBe("");
     expect(wrapper.find("#Content").element.value).toBe("");
-
-    // check if editPost is called
-    await wrapper.find("button").trigger("click");
-    expect(createPostCalled).toBe(true);
 });

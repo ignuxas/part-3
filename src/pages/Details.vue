@@ -34,7 +34,7 @@
 <script>
 import config from "../config.json"
 import { compareDates } from "../components/handlers.vue";
-import { mapMutations, mapGetters } from "vuex";
+import { mapMutations } from "vuex";
 import MutatePost from "../components/MutateWindow.vue";
 import Delete from "../components/Delete.vue";
 import HomeBtn from "../components/HomeBtn.vue";
