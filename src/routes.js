@@ -8,12 +8,12 @@ export default [
         redirect: '/posts'
     },
     {
-        path: '/details/:id',
-        component: Details,
-    },
-    {
         path: '/posts',
         component: posts,
+    },
+    {
+        path: '/posts/details/:id',
+        component: Details,
     },
     {
         path: '/404',

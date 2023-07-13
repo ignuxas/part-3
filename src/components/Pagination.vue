@@ -29,11 +29,12 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import api from "../plugins/api";
 
 export default {
     name: "pagination",
     computed: {
-        ...mapGetters("pageData", ["getCurrentPage", "getPostsPerPage", "getTotalPosts"]),
+        ...mapGetters("pageData", ["getCurrentPage", "getPostsPerPage", "getTotalPosts", "isOneItemLeft"]),
         lastPage(){return Math.ceil(this.getTotalPosts / this.getPostsPerPage);},
     },
     methods: {
@@ -41,13 +42,13 @@ export default {
         nextPage(){
             if (this.getCurrentPage < this.lastPage) {
                 this.incrimentCurrentPage();
-                this.$root.$emit("updatePosts");
+                this.$api.getPosts();
             }
         },
         prevPage(){
             if (this.getCurrentPage > 1) {
                 this.decrimentCurrentPage();
-                this.$root.$emit("updatePosts");
+                this.$api.getPosts();
             }
         }
     }

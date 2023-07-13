@@ -3,7 +3,7 @@ import Pagination from "../components/Pagination.vue";
 import { mount, createLocalVue } from "@vue/test-utils";
 import Vuex from "vuex";
 
-import Store from "../store.js";
+import Store from "../store/store.js";
 
 const localVue = createLocalVue();
 localVue.use(Vuex);

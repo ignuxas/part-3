@@ -1,11 +1,11 @@
 <template>
     <div>
-        <MutatePost :authors="authors"/>
-        <div v-if="getTotalPosts == 0 && !checkAllTrue(Object.values(loading))">
+        <MutatePost :authors="getAuthors"/>
+        <div v-if="getTotalPosts == 0 && !checkAllTrue(Object.values(loading)) && getSearch == ''">
             <p>There are no posts yet</p>
             <a @click.prevent="toggleMutateWindow()" class="clickable">New post</a>
         </div>
-        <div v-else-if="getTotalPosts > 0 && !checkAllTrue(Object.values(loading)) && posts.length == 0">
+        <div v-else-if="getSearch !== '' && !checkAllTrue(Object.values(loading)) && getPosts.length == 0">
             <Search/>
             <p>No posts were found</p>
             <a @click.prevent="toggleMutateWindow()" class="clickable">New post</a>
@@ -17,7 +17,7 @@
             <Search/>
             <Delete/>
             <div class="postContainer">
-                <div class="post" v-for="article in posts" :key="article.id">
+                <div class="post" v-for="article in getPosts" :key="article.id">
                     <h2 @click="goToPage(article.id)">{{ article.title }}</h2>
                     <p>{{ getAuthor(article.authorId).name }}</p>
                     <p class="postDate" v-if="compareDates(article.updated_at, article.created_at)">
@@ -61,6 +61,7 @@ export default {
         return {
             posts: [],
             authors: [],
+            authorId: 0,
             loading: {
                 posts: true,
                 authors: true,
@@ -70,46 +71,35 @@ export default {
         };
     },
     created(){
-        this.getAuthors();
-        this.getPosts();
-        this.$root.$on('updatePosts', (posts) => this.getPosts(posts));
+        this.getAuthorsData();
+        this.getPostsData();
     },
     computed: {
-        ...mapGetters("pageData", ["getCurrentPage", "getPostsPerPage", "getTotalPosts"]),
+        ...mapGetters("pageData", ["getCurrentPage", "getPostsPerPage", "getTotalPosts", "getSearch"]),
         ...mapGetters("mutateData", ["getShowMutateWindow", "showDeleteWindow", "getEditMode"]),
+        ...mapGetters("postData", ["getPosts", "getAuthors"]),
     },
     methods: {
         ...mapMutations("postData", ["setCurrentPost", "setCurrentPostId"]),
         ...mapMutations("pageData", ["setTotalPosts"]),
         ...mapMutations("mutateData", ["toggleShowMutateWindow", "toggleShowDeleteWindow", "setEditMode"]),
-        async getPosts(posts){
-            if (posts) { this.posts = posts; return; }
-            try{
-                const response = await fetch(config.api + "/posts?_page=" + this.getCurrentPage + "&_limit=" + this.getPostsPerPage);
-                this.setTotalPosts(response.headers.get("X-Total-Count"))
-                this.posts = await response.json();
-            } catch (error) { 
-                console.log(error);
-            }
-            finally { this.loading.posts = false; }
+        async getPostsData(posts){
+            await this.$api.getPosts(posts);
+            this.loading.posts = false;
         },
-        async getAuthors(){
-            try {
-                const response = await fetch(config.api + "/authors");
-                this.authors = await response.json();
-            }
-            catch (error) {console.log(error);}
-            finally {this.loading.authors = false;}
+        async getAuthorsData(){
+            await this.$api.getAuthors();
+            this.loading.authors = false;
         },
         getAuthor(authorId){
-            return this.authors.find((author) => author.id == authorId);
+            return this.getAuthors.find(author => author.id == authorId);
         },
         goToPage(page){
-            this.$router.push({path: `details/${page}`});
+            this.$router.push({path: `posts/details/${page}`});
         },
         toggleMutateWindow(post = null, editMode = false){
-            this.setCurrentPost(post);
             this.setEditMode(editMode);
+            this.setCurrentPost(post);
             this.toggleShowMutateWindow();
         },
         toggleDeleteWindow(id){

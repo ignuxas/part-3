@@ -34,7 +34,7 @@
 <script>
 import config from "../config.json"
 import { compareDates } from "../components/handlers.vue";
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 import MutatePost from "../components/MutateWindow.vue";
 import Delete from "../components/Delete.vue";
 import HomeBtn from "../components/HomeBtn.vue";
@@ -43,8 +43,6 @@ export default {
     name: "Details",
     data(){
         return {
-            post: {},
-            author: {},
             postId: this.$route.params.id,
             isLoading: true,
             isFound: true,
@@ -52,8 +50,7 @@ export default {
         }; 
     },
     created(){
-        this.getPost()
-        this.$root.$on('updatePosts', () => this.getPost());
+        this.getPost();
     },
     components: {
         MutatePost,
@@ -61,35 +58,24 @@ export default {
         HomeBtn,
     },
     computed: {
+        ...mapGetters('postData', ['getCurrentPost', 'getCurrentAuthor']),
+        post(){return this.getCurrentPost;},
+        author(){return this.getCurrentAuthor;},
     },
     methods: {
         ...mapMutations('mutateData', ['toggleShowMutateWindow', 'toggleShowDeleteWindow', 'setEditMode']),
         ...mapMutations('postData', ['setCurrentPost', 'setCurrentPostId']),
         async getPost(){
-            try {
-                const response = await fetch(config.api + "/posts/" + this.postId);
-                if(response.status === 404) this.isFound = false;
-                else {
-                    this.post = await response.json();
-                    this.getAuthor(this.post.authorId);
-                }
-            }
-            catch (error) {
-                console.log(error);
+            console.log(this.post)
+            await this.$api.getPost(this.postId);
+            if(this.post == null){
                 this.isFound = false;
-            }
+            } else { await this.getAuthor(this.post.authorId); }
+            this.isLoading = false;
         },
         async getAuthor(authorId){
-            try {
-                const response = await fetch(config.api + "/authors/" + authorId);
-                if  (response.status === 404) this.isFound = false;
-                else this.author = await response.json();
-            }
-            catch (error) {
-                console.log(error);
-                this.isFound = false;
-            }
-            finally{ this.isLoading = false; }
+            await this.$api.getAuthor(authorId);
+            console.log(this.author)
         },
         toggleMutateWindowFunc(post = null, editMode = false){
             this.setCurrentPost(post);

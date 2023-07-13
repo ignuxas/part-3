@@ -3,7 +3,7 @@ import { expect, test} from "vitest";
 import MutateWindow from "../components/MutateWindow.vue";
 import Vuex from "vuex";
 
-import Store from "../store";
+import Store from "../store/store.js";
 
 const localVue = createLocalVue();
 localVue.use(Vuex);

@@ -30,20 +30,13 @@ export default {
     },
     methods : {
         ...mapMutations('mutateData', ["toggleShowDeleteWindow"]),
+        ...mapMutations('pageData', ["lastItemOnPageCheck"]),
         async deletePost(postId){
-            try {
-                const response = await fetch(config.api + "/posts/" + postId, {
-                    method: "DELETE",
-                });
-                if (response.ok) {
-                    this.toggleShowDeleteWindow(false);
-                    if (this.pushBackPage) this.$router.push("/posts");
-                    else this.$root.$emit("updatePosts");
-                } 
-                this.$root.$emit("setStatus", response.status);
-            } catch (error) {
-                console.log(error);
-                this.$root.$emit("setStatus", 500);
+            const response = await this.$api.deletePost(postId);
+            if (response.ok) {
+                if (this.pushBackPage) this.$router.push("/posts");
+                await this.$api.getPosts();
+                this.toggleShowDeleteWindow();
             }
         },
     },

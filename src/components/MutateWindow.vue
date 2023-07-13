@@ -11,7 +11,10 @@
                     </option>
                 </select>
             </div>
-            <textarea id="Content" placeholder="Contnent" v-model="content"  ></textarea>
+            <textarea id="Content" placeholder="Content" v-model="content"  ></textarea>
+            <div class="MutateErrors">
+                <p v-for="error in errors" :key="error">{{ error }}</p>
+            </div>
             <button v-if="getEditMode" type="Submit" @click.prevent="editPost">Submit</button>
             <button v-else type="Submit" @click.prevent="createPost">Create</button>
         </form>
@@ -20,9 +23,7 @@
 </template>
 
 <script>
-import config from "../config.json";
 import { mapGetters, mapMutations } from "vuex";
-import { getCurrentDate } from "./handlers.vue";
 
 export default {
     name: "MutatePost",
@@ -31,6 +32,7 @@ export default {
         title: "",
         content: "",
         status: 200,
+        errors: [],
     }},
     props: {
         authors: {
@@ -38,28 +40,29 @@ export default {
             required: true,
         },
     },
+    watch: {
+        getShowMutateWindow(){
+            this.getData();
+        },
+    },
     computed: {
         ...mapGetters("postData", ["getCurrentPost"]),
         ...mapGetters('mutateData', ["getShowMutateWindow", "getShowDeleteWindow", "getEditMode"]),
+        ...mapGetters("pageData", ["getCurrentPage"]),
     }, 
-    watch: {
-        getCurrentPost(post){
-            if(this.getShowMutateWindow){
-                if(this.getEditMode)
-                {
-                    this.selectedAuthorId = post.authorId;
-                    this.title = post.title;
-                    this.content = post.body;
-                } else {
-                    this.selectedAuthorId = null;
-                    this.title = "";
-                    this.content = "";
-                }
-            }
-        },
-    },
     methods: {
         ...mapMutations("mutateData", ["toggleShowDeleteWindow", "toggleShowMutateWindow"]),
+        getData(){
+            if(this.getEditMode){
+                this.title = this.getCurrentPost.title;
+                this.content = this.getCurrentPost.body;
+                this.selectedAuthorId = this.getCurrentPost.authorId;
+            } else {
+                this.title = "";
+                this.content = "";
+                this.selectedAuthorId = null;
+            }
+        },
         checkInputValidity(){
             const titleInput = document.getElementById("Title");
             const contentInput = document.getElementById("Content");
@@ -77,21 +80,22 @@ export default {
                     input.classList.remove("invalid");
                 }
             });
+            this.errors = [];
 
             let didFail = false;
             if(this.title.length < 3 || this.title.length > 50){
                 titleInput.classList.add("invalid");
-                alert("Title must be between 3 and 50 characters.");
+                this.errors.push("Title must be between 3 and 50 characters.");
                 didFail = true;
             }
             if(this.content.length < 3 || this.content.length > 500 ){
                 contentInput.classList.add("invalid");
-                alert("Content must be between 3 and 500 characters.");
+                this.errors.push("Content must be between 3 and 500 characters.");
                 didFail = true;
             }
             if(!this.selectedAuthorId){
                 authorSelect.classList.add("invalid");
-                alert("Please select an author.");
+                this.errors.push("Author must be selected.");
                 didFail = true;
             }
 
@@ -104,57 +108,24 @@ export default {
             const dataToPost = {
                 title: this.title,
                 authorId: this.selectedAuthorId,
-                created_at: getCurrentDate(), // should be server-side
-                updated_at: getCurrentDate(), // should be server-side
                 body: this.content,
-            };
-            try {
-                const response = await fetch(config.api + "/posts", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(dataToPost),
-                });
-                this.status = response.status;
-                this.action = "created";
-            } catch (error) {
-                this.status = 500;
-                console.log(error);
-            } finally {
-                this.$root.$emit("updatePosts");
-                this.$root.$emit('setStatus', this.status, this.action);
             }
+            await this.$api.createPost(dataToPost);
+            //await this.$api.getPosts();
         },
 
         async editPost(){
             if(!this.checkInputValidity()) return;
-                const dataToPost = {
-                    title: this.title,
-                    authorId: this.selectedAuthorId,
-                    updated_at: getCurrentDate(), // should be server-side
-                    created_at: this.getCurrentPost.created_at, // should be server-side
-                    body: this.content,
-                };
-                console.log(dataToPost);
-                try {
-                    const response = await fetch(config.api + "/posts/" + this.getCurrentPost.id, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(dataToPost),
-                    });
-                    this.status = response.status;
-                    this.action = "edited";
-                } catch (error) {
-                    this.status = 500;
-                    console.log(error);
-                } finally {
-                    this.$root.$emit("updatePosts");
-                    this.$root.$emit('setStatus', this.status, this.action);
-                }
-            },
+            const dataToPost = {
+                id: this.getCurrentPost.id,
+                title: this.title,
+                authorId: this.selectedAuthorId,
+                created_at: this.getCurrentPost.created_at,
+                body: this.content,
+            };
+            const response = await this.$api.editPost(dataToPost);
+            await this.$api.getPosts();
+        },
     },
 }
 </script>
@@ -271,5 +242,14 @@ export default {
     }
     .invalid {
         border: 1px solid var(--color-error) !important;
+    }
+
+    .MutateErrors{
+        margin-bottom: 10px;
+        color: var(--color-error);
+    }
+    .MutateErrors p {
+        margin: 0;
+        font-size: 14px;
     }
 </style>

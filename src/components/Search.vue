@@ -1,7 +1,7 @@
 <template>
     <div id="SearchContainer">
         <form>
-            <input type="text" id="SearchInput" placeholder="Search" v-model="searchInput"/>
+            <input type="text" id="SearchInput" placeholder="Search" v-model="searchInput" v-debounce="search"/>
             <button type="submit" @click.prevent="search"><font-awesome-icon :icon="['fas', 'magnifying-glass']" /></button>
         </form>
     </div>
@@ -9,7 +9,7 @@
 
 <script>
 import api from "../config.json";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
     name: "Search",
@@ -20,11 +20,17 @@ export default {
         ...mapGetters("pageData", ["getPostsPerPage", "getCurrentPage"]),
     },
     methods: {
+        ...mapMutations("pageData", ["setTotalPosts", "setCurrentPage", "setSearch"]),
         async search(){
             try{
+                this.setCurrentPage(1);
+                this.setSearch(this.searchInput);
                 const response = await fetch(api.api + "/posts?q=" + this.searchInput + "&_page=" + this.getCurrentPage + "&_limit=" + this.getPostsPerPage);
-                const posts = await response.json();
-                this.$root.$emit("updatePosts", posts);
+                if(response.ok){
+                    const posts = await response.json();
+                    this.$root.$emit("updatePosts", posts);
+                    this.setTotalPosts(response.headers.get("X-Total-Count"));
+                }
             }  
             catch(error){console.log(error);}
         },
