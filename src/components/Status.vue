@@ -2,7 +2,7 @@
     <div id="StatusContainer" :class="{hidden: !getShowStatus, success: isSuccess(getStatus)}">
         <div v-if="isSuccess(getStatus)">
             <h1>Success</h1>
-            <span>The action was completed succesfully</span>
+            <span>The action was completed successfully</span>
         </div>
         <div v-else-if="getStatus === 404">
             <h1>Article not found</h1>

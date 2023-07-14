@@ -11,15 +11,16 @@ localVue.use(Vuex);
 describe("Delete rendered", async () => {
     expect(Delete).toBeTruthy(); // Delete is defined
     expect(Store).toBeTruthy(); // Store is defined
-  
-    let store = Store;
-
-    store.state.postData.id = 1;
-    store.state.postData.currentPostId = 1;
 
     const wrapper = shallowMount(Delete, {
-        store: store,
+        store: Store,
     });
+
+    wrapper.vm.$store.state.postData.id = 1;
+    const id = wrapper.vm.$store.state.postData.id;
+    wrapper.vm.$store.state.postData.currentPostId = 1;
+
+
     expect(wrapper).toBeTruthy(); // Delete is mounted
 
     it("Is Everything Rendered right", () => {
@@ -27,6 +28,6 @@ describe("Delete rendered", async () => {
         expect(wrapper.html()).toContain("ConfirmContainer");
 
         //check if the delete ID: text is the same as the one in the store
-        expect(wrapper.find("p").text()).toBe("ID: " + store.state.postData.id);
+        expect(wrapper.find("p").text()).toBe("ID: " + id);
     });
 });
