@@ -86,6 +86,7 @@ api.getAuthor = async function (id) {
 
 api.editPost = async function (reqData) {
   const setCurrentPost = (post) => api.store.commit('postData/setCurrentPost', post)
+  const toggleStatus = (status) => api.store.commit('mutateData/toggleStatus', status)
 
   const id = reqData.id
   const DataToPost = {
@@ -93,10 +94,9 @@ api.editPost = async function (reqData) {
     updated_at: getCurrentDate(),
   }
 
-  console.log(DataToPost)
-
   try {
     const response = await api.http.put(`/posts/${id}`, DataToPost)
+    toggleStatus(response.status)
     if(response.status == 200) {
       setCurrentPost(response.data)
       return { data: response.data, ok: true }
@@ -104,6 +104,7 @@ api.editPost = async function (reqData) {
       return { data: response, ok: false }
     }
   } catch (error) {
+    toggleStatus(500)
     console.log(error)
     return { data: error, ok: false }
   }
@@ -111,13 +112,17 @@ api.editPost = async function (reqData) {
 
 api.deletePost = async function (id) {
   const lastItemOnPageCheck = () => api.store.commit('pageData/lastItemOnPageCheck')
+  const toggleStatus = (status) => api.store.commit('mutateData/toggleStatus', status)
+  
   try {
     const response = await api.http.delete(`/posts/${id}`)
+    toggleStatus(response.status)
     if(response.status === 200) {
       lastItemOnPageCheck()
       return { data: response.data, ok: true }
     } else { return { data: response, ok: false } }
   } catch (error) {
+    toggleStatus(500)
     console.log(error)
     return { data: error, ok: false }
   }
@@ -125,6 +130,7 @@ api.deletePost = async function (id) {
 
 api.createPost = async function (reqData) {
   const setTotalPosts = (total) => api.store.commit('pageData/setTotalPosts', total)
+  const toggleStatus = (status) => api.store.commit('mutateData/toggleStatus', status)
   let getTotalPosts = api.store.getters['pageData/getTotalPosts']
   
   const DataToPost = {
@@ -135,11 +141,13 @@ api.createPost = async function (reqData) {
 
   try {
     const response = await api.http.post('/posts', DataToPost)
+    toggleStatus(response.status)
     if(response.status === 201) {
       setTotalPosts(parseInt(getTotalPosts) + 1)
       return { data: response.data, ok: true }
     } else { return { data: response.data, ok: false } }
   } catch (error) {
+    toggleStatus(500)
     console.log(error)
     return { data: error, ok: false }
   }

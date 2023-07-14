@@ -18,7 +18,7 @@
             <button v-if="getEditMode" type="Submit" @click.prevent="editPost">Submit</button>
             <button v-else type="Submit" @click.prevent="createPost">Create</button>
         </form>
-    <div class="blackBg" @click="toggleShowMutateWindow()"></div>
+    <div class="blackBg" @click="() => {toggleShowMutateWindow()}"></div>
     </div>
 </template>
 
@@ -47,10 +47,11 @@ export default {
     },
     computed: {
         ...mapGetters("postData", ["getCurrentPost"]),
-        ...mapGetters('mutateData', ["getShowMutateWindow", "getShowDeleteWindow", "getEditMode"]),
-        ...mapGetters("pageData", ["getCurrentPage"]),
+        ...mapGetters('mutateData', ["getShowMutateWindow", "getShowDeleteWindow", "getEditMode", "toggleStatus"]),
+        ...mapGetters("pageData", ["getCurrentPage", "getLastPage"]),
     }, 
     methods: {
+        ...mapMutations("postData", ["createPost", "editPost"]),
         ...mapMutations("mutateData", ["toggleShowDeleteWindow", "toggleShowMutateWindow"]),
         getData(){
             if(this.getEditMode){
@@ -111,6 +112,7 @@ export default {
                 body: this.content,
             }
             await this.$api.createPost(dataToPost);
+            if(this.getLastPage == this.getCurrentPage) await this.$api.getPosts()
             //await this.$api.getPosts();
         },
 

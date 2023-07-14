@@ -67,15 +67,15 @@ export default {
         ...mapMutations('postData', ['setCurrentPost', 'setCurrentPostId']),
         async getPost(){
             console.log(this.post)
-            await this.$api.getPost(this.postId);
-            if(this.post == null){
+            const response = await this.$api.getPost(this.postId);
+            if(!response.ok){
                 this.isFound = false;
+                return;
             } else { await this.getAuthor(this.post.authorId); }
             this.isLoading = false;
         },
         async getAuthor(authorId){
             await this.$api.getAuthor(authorId);
-            console.log(this.author)
         },
         toggleMutateWindowFunc(post = null, editMode = false){
             this.setCurrentPost(post);

@@ -25,12 +25,7 @@ export default {
             try{
                 this.setCurrentPage(1);
                 this.setSearch(this.searchInput);
-                const response = await fetch(api.api + "/posts?q=" + this.searchInput + "&_page=" + this.getCurrentPage + "&_limit=" + this.getPostsPerPage);
-                if(response.ok){
-                    const posts = await response.json();
-                    this.$root.$emit("updatePosts", posts);
-                    this.setTotalPosts(response.headers.get("X-Total-Count"));
-                }
+                await this.$api.getPosts();
             }  
             catch(error){console.log(error);}
         },

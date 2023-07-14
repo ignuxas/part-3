@@ -11,6 +11,7 @@ const getters = {
     getPostsPerPage: state => state.postsPerPage,
     getTotalPosts: state => state.totalPosts,
     getSearch: state => state.search,
+    getLastPage: state => Math.ceil(state.totalPosts / state.postsPerPage),
 }
 
 const actions = {}
@@ -36,8 +37,6 @@ const mutations = {
         }
     },
     lastItemOnPageCheck(state) {
-        console.log(state.currentPage, Math.ceil(state.totalPosts / state.postsPerPage));
-        console.log(state.totalPosts % state.postsPerPage);
         if (
             state.currentPage  === Math.ceil(state.totalPosts / state.postsPerPage)
             && state.totalPosts % state.postsPerPage === 1

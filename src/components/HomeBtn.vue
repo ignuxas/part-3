@@ -1,12 +1,7 @@
 <template>
-    <div>
-        <router-link id="HomeBtn" to="/posts">
-            <font-awesome-icon :icon="['fas', 'house']" />
-        </router-link>
-        <button @click="$api.getPosts">
-            test
-        </button>
-    </div>
+    <router-link id="HomeBtn" to="/posts">
+        <font-awesome-icon :icon="['fas', 'house']" />
+    </router-link>
 </template>
 
 <script>

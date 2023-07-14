@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import config from "../config.json";
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
