@@ -8,6 +8,7 @@ import Store from "../store/store.js";
 const localVue = createLocalVue();
 localVue.use(Vuex);
 
+
 test("Mutate window (Edit Mode)", async () => {
     expect(MutateWindow).toBeTruthy(); // MutateWindow is defined
     const post = {
@@ -59,8 +60,6 @@ test("Mutate window (Edit Mode)", async () => {
 test("Mutate window (Create Mode)", async () => {
     expect(MutateWindow).toBeTruthy(); // MutateWindow is defined
     
-    let createPostCalled = false;
-
     let store = Store;
     store.state.mutateData.editMode = false;
     

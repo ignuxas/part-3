@@ -1,4 +1,4 @@
-import { expect, test} from "vitest";
+import { describe, expect, it, test} from "vitest";
 import Delete from "../components/Delete.vue";
 import { createLocalVue, shallowMount } from "@vue/test-utils";
 import Vuex from "vuex";
@@ -8,7 +8,7 @@ import Store from "../store/store.js";
 const localVue = createLocalVue();
 localVue.use(Vuex);
 
-test("Delete rendered", async () => {
+describe("Delete rendered", async () => {
     expect(Delete).toBeTruthy(); // Delete is defined
     expect(Store).toBeTruthy(); // Store is defined
   
@@ -18,14 +18,15 @@ test("Delete rendered", async () => {
     store.state.postData.currentPostId = 1;
 
     const wrapper = shallowMount(Delete, {
-        store: Store,
+        store: store,
     });
-
     expect(wrapper).toBeTruthy(); // Delete is mounted
 
-    //check if the component is rendered
-    expect(wrapper.html()).toContain("ConfirmContainer");
+    it("Is Everything Rendered right", () => {
+        //check if the component is rendered
+        expect(wrapper.html()).toContain("ConfirmContainer");
 
-    //check if the delete ID: text is the same as the one in the store
-    expect(wrapper.find("p").text()).toBe("ID: " + store.state.postData.id);
+        //check if the delete ID: text is the same as the one in the store
+        expect(wrapper.find("p").text()).toBe("ID: " + store.state.postData.id);
+    });
 });

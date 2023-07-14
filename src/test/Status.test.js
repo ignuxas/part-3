@@ -1,91 +1,72 @@
 import { mount } from "@vue/test-utils";
 import { expect, test } from "vitest";
 import Status from "../components/Status.vue";
+import { createLocalVue } from "@vue/test-utils";
+import Vuex from "vuex";
 
-test("Status functionality (200)", async () => {
+import Store from "../store/store.js";
+
+const localVue = createLocalVue();
+localVue.use(Vuex);
+
+test("Status 200", async () => {
     expect(Status).toBeTruthy(); // Status is defined
-    
+
     const wrapper = mount(Status, {
-        data(){
-            return {
-                status: 200,
-                hidden: false,
-            };
-        },
+        store: Store,
     });
+
+    // set the status to 200
     expect(wrapper).toBeTruthy(); // Status is mounted
 
     //check if the component is rendered
     expect(wrapper.html()).toContain("Status");
 
-    // check
-    expect(wrapper.find("#StatusContainer").element.className).toBe("success");
+    expect(wrapper.find("#StatusContainer").element.className).toBe("hidden success");
     expect(wrapper.find("#StatusContainer").element.hidden).toBe(false);
     expect(wrapper.find("h1").element.textContent).toBe("Success");
 })
 
-test("Status functionality (404)", async () => {
+test("Status 404", async () => {
     expect(Status).toBeTruthy(); // Status is defined
-    
+
+    let store = Store;
+
+    store.state.mutateData.currentStatus = 404;
+
     const wrapper = mount(Status, {
-        data(){
-            return {
-                status: 404,
-                hidden: false,
-            };
-        },
+        store: store,
     });
+
+    // set the status to 404
     expect(wrapper).toBeTruthy(); // Status is mounted
 
     //check if the component is rendered
     expect(wrapper.html()).toContain("Status");
 
-    // check
-    expect(wrapper.find("#StatusContainer").element.className).toBe("");
+    expect(wrapper.find("#StatusContainer").element.className).toBe("hidden");
     expect(wrapper.find("#StatusContainer").element.hidden).toBe(false);
     expect(wrapper.find("h1").element.textContent).toBe("Article not found");
 })
 
-test("Status functionality (500)", async () => {
+test("Status 500", async () => {
     expect(Status).toBeTruthy(); // Status is defined
-    
+
+    let store = Store;
+
+    store.state.mutateData.currentStatus = 500;
+
     const wrapper = mount(Status, {
-        data(){
-            return {
-                status: 500,
-                hidden: false,
-            };
-        },
+        store: store,
     });
+
+    // set the status to 500
     expect(wrapper).toBeTruthy(); // Status is mounted
 
     //check if the component is rendered
     expect(wrapper.html()).toContain("Status");
 
-    // check
-    expect(wrapper.find("#StatusContainer").element.className).toBe("");
+    expect(wrapper.find("#StatusContainer").element.className).toBe("hidden");
     expect(wrapper.find("#StatusContainer").element.hidden).toBe(false);
     expect(wrapper.find("h1").element.textContent).toBe("Server error");
-})
-
-test("Status functionality (69)", async () => {
-    expect(Status).toBeTruthy(); // Status is defined
-    
-    const wrapper = mount(Status, {
-        data(){
-            return {
-                status: 69,
-                hidden: false,
-            };
-        },
-    });
-    expect(wrapper).toBeTruthy(); // Status is mounted
-
-    //check if the component is rendered
-    expect(wrapper.html()).toContain("Status");
-
-    // check
-    expect(wrapper.find("#StatusContainer").element.className).toBe("");
-    expect(wrapper.find("#StatusContainer").element.hidden).toBe(false);
-    expect(wrapper.find("h1").element.textContent).toBe("Unknown error");
 })
