@@ -29,20 +29,41 @@ describe("Pagination functionality with modified store", async () => {
         expect(wrapper.html()).toContain("/ 3");
     });
 
-    it("Functionality", async () => {
+    it("Check if paginaton buttons works correctly", async () => {
         const PrevButton = wrapper.find("#PaginationButtonPrev");
         const NextButton = wrapper.find("#PaginationButtonNext");
 
-        //check if the nextPage function is called
-        await PrevButton.trigger("click");
-        expect(store.state.pageData.currentPage).toBe(1);
-
+        store.state.pageData.currentPage = 1;
         await NextButton.trigger("click");
         expect(store.state.pageData.currentPage).toBe(2);
 
+        await PrevButton.trigger("click");
+        expect(store.state.pageData.currentPage).toBe(1);
+    });
+
+    it("Check if going forward from the last page is disabled", async () => {
+        const NextButton = wrapper.find("#PaginationButtonNext");
+        
         store.state.pageData.currentPage = 3;
         await NextButton.trigger("click");
         expect(store.state.pageData.currentPage).toBe(3);
     });
 
+    it("Check if going back from the first page is disabled", async () => {
+        const PrevButton = wrapper.find("#PaginationButtonPrev");
+
+        store.state.pageData.currentPage = 1;
+        await PrevButton.trigger("click");
+        expect(store.state.pageData.currentPage).toBe(1);
+    });
+
+    it("Check if the pages are calculated correctly", async () => {
+        await wrapper.vm.$store.commit("pageData/setCurrentPage", 1);
+        await wrapper.vm.$store.commit("pageData/setPostsPerPage", 6);
+        await wrapper.vm.$store.commit("pageData/setTotalPosts", 12);
+
+        expect(wrapper.html()).toContain("1");
+        expect(wrapper.html()).toContain("/ 2");
+
+    });
 });

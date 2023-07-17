@@ -42,7 +42,7 @@
 
 <script>
 import config from "../config.json"
-import { checkAllTrue, compareDates } from "../components/handlers.vue";
+import { checkAllTrue, compareDates } from "../handlers/handlers.js";
 import MutatePost from "../components/MutateWindow.vue";
 import Search from "../components/Search.vue";
 import Delete from "../components/Delete.vue";

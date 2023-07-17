@@ -18,7 +18,7 @@
             <button v-if="getEditMode" type="Submit" @click.prevent="editPost">Submit</button>
             <button v-else type="Submit" @click.prevent="createPost">Create</button>
         </form>
-    <div class="blackBg" @click="() => {toggleShowMutateWindow()}"></div>
+    <div class="blackBg" @click="toggleShowMutateWindow()" id="CloseMutate"></div>
     </div>
 </template>
 

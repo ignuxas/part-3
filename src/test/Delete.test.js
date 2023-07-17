@@ -8,7 +8,7 @@ import Store from "../store/store.js";
 const localVue = createLocalVue();
 localVue.use(Vuex);
 
-describe("Delete rendered", async () => {
+describe("Delete functionality", async () => {
     expect(Delete).toBeTruthy(); // Delete is defined
     expect(Store).toBeTruthy(); // Store is defined
 
@@ -17,9 +17,10 @@ describe("Delete rendered", async () => {
     });
 
     wrapper.vm.$store.state.postData.id = 1;
-    const id = wrapper.vm.$store.state.postData.id;
     wrapper.vm.$store.state.postData.currentPostId = 1;
+    wrapper.vm.$store.state.mutateData.showDeleteWindow = true;
 
+    const id = wrapper.vm.$store.state.postData.id;
 
     expect(wrapper).toBeTruthy(); // Delete is mounted
 
@@ -29,5 +30,15 @@ describe("Delete rendered", async () => {
 
         //check if the delete ID: text is the same as the one in the store
         expect(wrapper.find("p").text()).toBe("ID: " + id);
+    });
+
+    it("Does the 'No' button close the window", async () => {
+        const button = wrapper.find("#confirmNo");
+        await button.trigger("click");
+
+        // check if the store is updated
+        expect(wrapper.vm.$store.state.mutateData.showDeleteWindow).toBe(false);
+        // check if it's hidden
+        expect(wrapper.find("#ConfirmContainer").classes()).toContain("hidden");
     });
 });

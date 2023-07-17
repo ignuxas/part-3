@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { mapGetters, mapMutations } from 'vuex'
+
 import { getCurrentDate } from '../handlers/handlers'
 
 export const api = {}

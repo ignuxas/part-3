@@ -32,8 +32,7 @@
 </template>
 
 <script>
-import config from "../config.json"
-import { compareDates } from "../components/handlers.vue";
+import { compareDates } from "../handlers/handlers.js";
 import { mapMutations, mapGetters } from "vuex";
 import MutatePost from "../components/MutateWindow.vue";
 import Delete from "../components/Delete.vue";
