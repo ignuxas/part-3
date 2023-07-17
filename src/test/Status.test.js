@@ -29,17 +29,14 @@ describe("Status rendered", async () => {
     });
 
     it("Is the text correct (404)", async () => {
-        // This is the only way I could get this to work 
-        wrapper.vm.$store.state.mutateData.currentStatus = 404;
-        await wrapper.vm.$store.dispatch("mutateData/toggleStatus", 404);
+        await wrapper.vm.$store.commit("mutateData/toggleStatus", 404);
 
         expect(wrapper.find("h1").text()).toBe("Article not found");
         expect(wrapper.find("span").text()).toBe("The article you are looking for was not found");
     });
 
     it("Is the text correct (500)", async () => {
-        wrapper.vm.$store.state.mutateData.currentStatus = 500;
-        await wrapper.vm.$store.dispatch("mutateData/toggleStatus", 500);
+        await wrapper.vm.$store.commit("mutateData/toggleStatus", 500);
 
         expect(wrapper.find("h1").text()).toBe("Server error");
         expect(wrapper.find("span").text()).toBe("There was an error on the server");
