@@ -5,7 +5,7 @@ import { getCurrentDate } from '../handlers/handlers'
 export const api = {}
 
 api.http = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: SERVER_ADDR,
   timeout: 2000,
 })
 

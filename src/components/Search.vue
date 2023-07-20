@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import api from "../config.json";
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
